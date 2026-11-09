@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "PulseMusic",
-    "slug": "pulsemusic",
+    "name": "FallingMusic",
+    "slug": "fallingmusic",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -42,7 +42,7 @@
       [
         "expo-media-library",
         {
-          "photosPermission": "PulseMusic requires access to scan your local audio files.",
+          "photosPermission": "FallingMusic requires access to scan your local audio files.",
           "savePhotosPermission": false,
           "isAccessMediaLocationEnabled": false
         }

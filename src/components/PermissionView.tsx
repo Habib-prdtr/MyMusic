@@ -29,10 +29,10 @@ export const PermissionView: React.FC<PermissionViewProps> = ({
         <Music2 size={48} color={COLORS.primaryLight} />
       </View>
 
-      <Text style={styles.title}>Welcome to PulseMusic</Text>
+      <Text style={styles.title}>Welcome to FallingMusic</Text>
       
       <Text style={styles.description}>
-        PulseMusic is 100% offline and respects your privacy. To detect, index, and play the songs
+        FallingMusic is 100% offline and respects your privacy. To detect, index, and play the songs
         stored on your device, please grant permission to access audio files.
       </Text>
 
@@ -83,12 +83,12 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: RADIUS.full,
-    backgroundColor: 'rgba(99, 102, 241, 0.15)',
+    backgroundColor: 'rgba(13, 148, 136, 0.12)',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: SPACING.xl,
     borderWidth: 1,
-    borderColor: 'rgba(99, 102, 241, 0.3)',
+    borderColor: 'rgba(13, 148, 136, 0.25)',
   },
   title: {
     fontSize: 24,

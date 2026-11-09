@@ -71,7 +71,7 @@ export default function App() {
         {isLoading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={COLORS.primary} />
-            <Text style={styles.loadingText}>Initializing PulseMusic...</Text>
+            <Text style={styles.loadingText}>Initializing FallingMusic...</Text>
           </View>
         ) : hasPermission === false ? (
           <PermissionView
@@ -88,9 +88,9 @@ export default function App() {
             <View style={styles.header}>
               <View style={styles.brandRow}>
                 <View style={styles.brandIconBox}>
-                  <Radio size={20} color="#FFF" />
+                  <Leaf size={20} color="#FFF" fill="#FFF" />
                 </View>
-                <Text style={styles.brandTitle}>PulseMusic</Text>
+                <Text style={styles.brandTitle}>FallingMusic</Text>
                 <View style={styles.offlineBadge}>
                   <Text style={styles.offlineText}>OFFLINE</Text>
                 </View>
