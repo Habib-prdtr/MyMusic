@@ -8,7 +8,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Slider from '@react-native-community/slider';
+import { AudioSlider } from './AudioSlider';
 import {
   ChevronDown,
   ListMusic,
@@ -136,18 +136,11 @@ export const NowPlayingModal: React.FC<NowPlayingModalProps> = ({
 
         {/* Progress Seeker */}
         <View style={styles.seekerSection}>
-          <Slider
-            style={styles.slider}
-            minimumValue={0}
+          <AudioSlider
             maximumValue={duration > 0 ? duration : 1}
             value={displayPosition}
-            minimumTrackTintColor={COLORS.primaryLight}
-            maximumTrackTintColor={COLORS.borderLight}
-            thumbTintColor={COLORS.text}
-            onValueChange={val => {
-              setIsSeeking(true);
-              setSeekPos(val);
-            }}
+            onSlidingStart={() => setIsSeeking(true)}
+            onValueChange={val => setSeekPos(val)}
             onSlidingComplete={val => {
               seekTo(val);
               setIsSeeking(false);
