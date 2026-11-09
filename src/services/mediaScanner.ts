@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import {
   getAssetsAsync,
   getPermissionsAsync,
@@ -5,6 +6,7 @@ import {
   PermissionStatus,
 } from 'expo-media-library/legacy';
 import { Directory, File, Paths } from 'expo-file-system';
+import * as DocumentPicker from 'expo-document-picker';
 import { Track, SortOption, SortDirection } from '../types/music';
 import { cleanSongTitle, cleanArtistName, cleanAlbumName } from '../utils/formatters';
 
@@ -21,10 +23,12 @@ const DEMO_OFFLINE_TRACKS: Track[] = [
     artist: 'The Midnight Echo',
     album: 'Synthwave Odyssey',
     duration: 184,
-    uri: 'file:///sdcard/Music/The Midnight Echo - Neon Dream.wav',
+    uri: Platform.OS === 'web'
+      ? 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+      : 'file:///sdcard/Music/The Midnight Echo - Neon Dream.wav',
     artworkUri: undefined,
     dateAdded: Date.now() - 10000,
-    filename: 'The Midnight Echo - Neon Dream.wav',
+    filename: 'The Midnight Echo - Neon Dream.mp3',
   },
   {
     id: 'demo_2',
@@ -32,18 +36,20 @@ const DEMO_OFFLINE_TRACKS: Track[] = [
     artist: 'Aurora Skyline',
     album: 'Retro Future',
     duration: 212,
-    uri: 'file:///sdcard/Music/Aurora Skyline - Cyber City.wav',
+    uri: Platform.OS === 'web'
+      ? 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
+      : 'file:///sdcard/Music/Aurora Skyline - Cyber City.wav',
     artworkUri: undefined,
     dateAdded: Date.now() - 5000,
-    filename: 'Aurora Skyline - Cyber City.wav',
+    filename: 'Aurora Skyline - Cyber City.mp3',
   },
   {
     id: 'demo_3',
-    title: 'Synthwave Odyssey (Stream)',
+    title: 'Synthwave Odyssey',
     artist: 'Pulse Soundscape',
     album: 'Deep Space',
     duration: 372,
-    uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
     artworkUri: undefined,
     dateAdded: Date.now() - 2000,
     filename: 'Pulse Soundscape - Synthwave Odyssey.mp3',
@@ -55,6 +61,14 @@ export const MediaScannerService = {
    * Check current media access permissions
    */
   async checkPermissions(): Promise<PermissionStatusResult> {
+    if (Platform.OS === 'web') {
+      return {
+        granted: true,
+        canAskAgain: false,
+        status: PermissionStatus.GRANTED,
+      };
+    }
+
     try {
       const result = await getPermissionsAsync(false);
       const granted = result.granted || result.status === PermissionStatus.GRANTED || (result as any).accessPrivileges === 'all';
@@ -77,6 +91,14 @@ export const MediaScannerService = {
    * Request media access permission
    */
   async requestPermissions(): Promise<PermissionStatusResult> {
+    if (Platform.OS === 'web') {
+      return {
+        granted: true,
+        canAskAgain: false,
+        status: PermissionStatus.GRANTED,
+      };
+    }
+
     try {
       const result = await requestPermissionsAsync(false);
       const granted = result.granted || result.status === PermissionStatus.GRANTED || (result as any).accessPrivileges === 'all';
@@ -96,9 +118,48 @@ export const MediaScannerService = {
   },
 
   /**
+   * Pick local audio files from device/computer via file picker
+   */
+  async pickAudioFiles(): Promise<Track[]> {
+    try {
+      const res = await DocumentPicker.getDocumentAsync({
+        type: ['audio/*'],
+        multiple: true,
+        copyToCacheDirectory: true,
+      });
+
+      if (res.canceled || !res.assets) return [];
+
+      const tracks: Track[] = [];
+      for (const asset of res.assets) {
+        const { parsedTitle, parsedArtist } = this.parseFilenameMetadata(asset.name);
+        tracks.push({
+          id: `picked_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+          title: cleanSongTitle(parsedTitle, asset.name),
+          artist: cleanArtistName(parsedArtist),
+          album: cleanAlbumName('Imported Tracks'),
+          duration: 180,
+          uri: asset.uri,
+          artworkUri: undefined,
+          dateAdded: Date.now(),
+          filename: asset.name,
+        });
+      }
+      return tracks;
+    } catch (e) {
+      console.warn('Error picking audio files:', e);
+      return [];
+    }
+  },
+
+  /**
    * Fallback scanner for filesystem or starter tracks when MediaStore is unavailable
    */
   async scanFileSystemFallback(): Promise<Track[]> {
+    if (Platform.OS === 'web') {
+      return DEMO_OFFLINE_TRACKS;
+    }
+
     const validExtensions = ['.mp3', '.m4a', '.wav', '.flac', '.aac', '.ogg'];
     const foundTracks: Track[] = [];
 
@@ -150,6 +211,10 @@ export const MediaScannerService = {
    * Scan local audio files via OS MediaStore
    */
   async scanAudioFiles(): Promise<Track[]> {
+    if (Platform.OS === 'web') {
+      return DEMO_OFFLINE_TRACKS;
+    }
+
     try {
       // Query up to 10,000 audio assets
       const assets = await getAssetsAsync({

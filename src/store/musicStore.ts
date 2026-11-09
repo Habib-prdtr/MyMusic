@@ -49,6 +49,7 @@ interface MusicStoreState {
   initialize: () => Promise<void>;
   requestPermissionAndScan: () => Promise<boolean>;
   scanLibrary: () => Promise<void>;
+  importTracks: (newTracks: Track[]) => void;
   
   playTrack: (track: Track, customQueue?: Track[]) => Promise<void>;
   togglePlayPause: () => Promise<void>;
@@ -190,6 +191,24 @@ export const useMusicStore = create<MusicStoreState>((set, get) => ({
       console.error('Scan error:', e);
       set({ isScanning: false });
     }
+  },
+
+  importTracks: (newTracks: Track[]) => {
+    if (!newTracks || newTracks.length === 0) return;
+    const existing = get().tracks;
+    const existingIds = new Set(existing.map(t => t.id));
+    const toAdd = newTracks.filter(t => !existingIds.has(t.id));
+    if (toAdd.length === 0) return;
+
+    const merged = [...toAdd, ...existing];
+    const { sortOption, sortDirection, searchQuery } = get();
+    const sorted = MediaScannerService.sortTracks(merged, sortOption, sortDirection);
+    const filtered = filterTracks(sorted, searchQuery);
+
+    set({
+      tracks: sorted,
+      filteredTracks: filtered,
+    });
   },
 
   playTrack: async (track: Track, customQueue?: Track[]) => {

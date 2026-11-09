@@ -7,12 +7,13 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
-import { ArrowDownUp, RefreshCw, Music2 } from 'lucide-react-native';
+import { ArrowDownUp, RefreshCw, Music2, FolderPlus } from 'lucide-react-native';
 import { COLORS, RADIUS, SPACING } from '../utils/theme';
 import { useMusicStore } from '../store/musicStore';
 import { SearchBar } from '../components/SearchBar';
 import { TrackItem } from '../components/TrackItem';
 import { SortModal } from '../components/SortModal';
+import { MediaScannerService } from '../services/mediaScanner';
 import { Track } from '../types/music';
 
 interface TracksScreenProps {
@@ -29,6 +30,7 @@ export const TracksScreen: React.FC<TracksScreenProps> = ({ onOpenTrackMenu }) =
   const sortDirection = useMusicStore(s => s.sortDirection);
 
   const scanLibrary = useMusicStore(s => s.scanLibrary);
+  const importTracks = useMusicStore(s => s.importTracks);
   const playTrack = useMusicStore(s => s.playTrack);
   const setSearchQuery = useMusicStore(s => s.setSearchQuery);
   const setSortOption = useMusicStore(s => s.setSortOption);
@@ -46,6 +48,19 @@ export const TracksScreen: React.FC<TracksScreenProps> = ({ onOpenTrackMenu }) =
         </View>
 
         <View style={styles.headerBtnRow}>
+          <TouchableOpacity
+            style={styles.iconBtn}
+            onPress={async () => {
+              const picked = await MediaScannerService.pickAudioFiles();
+              if (picked.length > 0) {
+                importTracks(picked);
+              }
+            }}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <FolderPlus size={18} color={COLORS.textSecondary} />
+          </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.iconBtn}
             onPress={() => setIsSortModalVisible(true)}
