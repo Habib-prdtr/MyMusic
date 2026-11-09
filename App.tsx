@@ -67,6 +67,10 @@ export default function App() {
           <PermissionView
             onRequestPermission={requestPermissionAndScan}
             onRefreshPermission={initialize}
+            onContinueAnyway={() => {
+              useMusicStore.setState({ hasPermission: true });
+              useMusicStore.getState().scanLibrary();
+            }}
           />
         ) : (
           <View style={styles.mainContainer}>

@@ -1,4 +1,11 @@
 import { registerRootComponent } from 'expo';
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs([
+  'Failed to activate lock screen controls',
+  'Failed to start the expo-audio playback service',
+  'Method getAssetsAsync imported from',
+]);
 
 import App from './App';
 

@@ -7,12 +7,13 @@ interface PermissionViewProps {
   isDeniedPermanently?: boolean;
   onRequestPermission: () => void;
   onRefreshPermission: () => void;
+  onContinueAnyway?: () => void;
 }
 
 export const PermissionView: React.FC<PermissionViewProps> = ({
-  isDeniedPermanently = false,
   onRequestPermission,
   onRefreshPermission,
+  onContinueAnyway,
 }) => {
   const handleOpenSettings = async () => {
     try {
@@ -59,6 +60,12 @@ export const PermissionView: React.FC<PermissionViewProps> = ({
         <TouchableOpacity style={styles.refreshBtn} onPress={onRefreshPermission}>
           <Text style={styles.refreshBtnText}>I already enabled it, check again</Text>
         </TouchableOpacity>
+
+        {onContinueAnyway && (
+          <TouchableOpacity style={styles.continueBtn} onPress={onContinueAnyway}>
+            <Text style={styles.continueBtnText}>Continue to Music Library →</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -160,5 +167,18 @@ const styles = StyleSheet.create({
     color: COLORS.primaryLight,
     fontSize: 13,
     fontWeight: '500',
+  },
+  continueBtn: {
+    paddingVertical: SPACING.md,
+    alignItems: 'center',
+    backgroundColor: COLORS.cardActive,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1,
+    borderColor: COLORS.primaryLight,
+  },
+  continueBtnText: {
+    color: COLORS.primaryLight,
+    fontSize: 14,
+    fontWeight: '700',
   },
 });
