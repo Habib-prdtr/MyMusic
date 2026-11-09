@@ -40,3 +40,9 @@ export interface AlbumGroup {
   tracks: Track[];
   trackCount: number;
 }
+
+export interface PlaylistSequenceItem {
+  id: string;
+  name: string;
+  trackCount: number;
+}

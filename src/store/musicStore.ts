@@ -75,6 +75,15 @@ interface MusicStoreState {
   setNowPlayingVisible: (visible: boolean) => void;
   setQueueVisible: (visible: boolean) => void;
 
+  // Playlist Sequencing (Urutan Antrean Playlist Sementara)
+  playlistSequence: string[];
+  activeSequenceIndex: number;
+  isSequenceActive: boolean;
+  setPlaylistSequence: (sequence: string[]) => void;
+  startPlaylistSequence: (sequence: string[], startIndex?: number) => Promise<void>;
+  stopPlaylistSequence: () => void;
+  getActiveSequencePlaylistName: () => string | null;
+
   // Computed getters
   getArtistGroups: () => ArtistGroup[];
   getAlbumGroups: () => AlbumGroup[];
@@ -112,6 +121,10 @@ export const useMusicStore = create<MusicStoreState>((set, get) => ({
   activeTab: 'tracks',
   isNowPlayingVisible: false,
   isQueueVisible: false,
+
+  playlistSequence: [],
+  activeSequenceIndex: -1,
+  isSequenceActive: false,
 
   initialize: async () => {
     // 1. Hook into AudioService callbacks
@@ -267,11 +280,53 @@ export const useMusicStore = create<MusicStoreState>((set, get) => ({
   },
 
   playNext: async () => {
-    const { queue, queueIndex, repeatMode } = get();
+    const {
+      queue,
+      queueIndex,
+      repeatMode,
+      isSequenceActive,
+      playlistSequence,
+      activeSequenceIndex,
+    } = get();
     if (queue.length === 0) return;
 
     let nextIndex = queueIndex + 1;
     if (nextIndex >= queue.length) {
+      // If temporary sequential playlist mode is active
+      if (isSequenceActive && playlistSequence.length > 0) {
+        let nextSeq = activeSequenceIndex + 1;
+        while (nextSeq < playlistSequence.length) {
+          const nextPlId = playlistSequence[nextSeq];
+          const nextTracks =
+            nextPlId === 'favorites'
+              ? get().getFavoriteTracks()
+              : get().getPlaylistTracks(nextPlId);
+
+          if (nextTracks.length > 0) {
+            set({ activeSequenceIndex: nextSeq });
+            await get().playTrack(nextTracks[0], nextTracks);
+            return;
+          }
+          nextSeq++;
+        }
+
+        // Sequence reached the end
+        if (repeatMode === 'all') {
+          // Loop entire sequence
+          await get().startPlaylistSequence(playlistSequence, 0);
+          return;
+        } else {
+          await audioService.stop();
+          set({
+            playbackState: 'idle',
+            position: 0,
+            isSequenceActive: false,
+            activeSequenceIndex: -1,
+          });
+          return;
+        }
+      }
+
       if (repeatMode === 'all') {
         nextIndex = 0;
       } else {
@@ -296,7 +351,14 @@ export const useMusicStore = create<MusicStoreState>((set, get) => ({
   },
 
   playPrevious: async () => {
-    const { queue, queueIndex, position } = get();
+    const {
+      queue,
+      queueIndex,
+      position,
+      isSequenceActive,
+      playlistSequence,
+      activeSequenceIndex,
+    } = get();
     if (queue.length === 0) return;
 
     // If playback is more than 3 seconds in, restart track
@@ -308,6 +370,25 @@ export const useMusicStore = create<MusicStoreState>((set, get) => ({
 
     let prevIndex = queueIndex - 1;
     if (prevIndex < 0) {
+      if (isSequenceActive && playlistSequence.length > 0 && activeSequenceIndex > 0) {
+        let prevSeq = activeSequenceIndex - 1;
+        while (prevSeq >= 0) {
+          const prevPlId = playlistSequence[prevSeq];
+          const prevTracks =
+            prevPlId === 'favorites'
+              ? get().getFavoriteTracks()
+              : get().getPlaylistTracks(prevPlId);
+
+          if (prevTracks.length > 0) {
+            set({ activeSequenceIndex: prevSeq });
+            const lastTrack = prevTracks[prevTracks.length - 1];
+            await get().playTrack(lastTrack, prevTracks);
+            return;
+          }
+          prevSeq--;
+        }
+      }
+
       prevIndex = queue.length - 1;
     }
 
@@ -452,6 +533,64 @@ export const useMusicStore = create<MusicStoreState>((set, get) => ({
   setActiveTab: (tab: TabType) => set({ activeTab: tab }),
   setNowPlayingVisible: (visible: boolean) => set({ isNowPlayingVisible: visible }),
   setQueueVisible: (visible: boolean) => set({ isQueueVisible: visible }),
+
+  setPlaylistSequence: (sequence: string[]) => {
+    set({ playlistSequence: sequence });
+  },
+
+  startPlaylistSequence: async (sequence: string[], startIndex = 0) => {
+    if (!sequence || sequence.length === 0) return;
+    const targetIndex = Math.min(Math.max(0, startIndex), sequence.length - 1);
+
+    let foundIndex = -1;
+    let foundTracks: Track[] = [];
+
+    for (let i = targetIndex; i < sequence.length; i++) {
+      const plId = sequence[i];
+      const tracks =
+        plId === 'favorites'
+          ? get().getFavoriteTracks()
+          : get().getPlaylistTracks(plId);
+
+      if (tracks.length > 0) {
+        foundIndex = i;
+        foundTracks = tracks;
+        break;
+      }
+    }
+
+    if (foundIndex === -1 || foundTracks.length === 0) {
+      return;
+    }
+
+    set({
+      playlistSequence: sequence,
+      activeSequenceIndex: foundIndex,
+      isSequenceActive: true,
+    });
+
+    await get().playTrack(foundTracks[0], foundTracks);
+  },
+
+  stopPlaylistSequence: () => {
+    set({
+      isSequenceActive: false,
+      activeSequenceIndex: -1,
+    });
+  },
+
+  getActiveSequencePlaylistName: () => {
+    const { isSequenceActive, activeSequenceIndex, playlistSequence, playlists } = get();
+    if (!isSequenceActive || activeSequenceIndex < 0 || activeSequenceIndex >= playlistSequence.length) {
+      return null;
+    }
+    const currentId = playlistSequence[activeSequenceIndex];
+    if (currentId === 'favorites') {
+      return 'Favorite Songs';
+    }
+    const pl = playlists.find(p => p.id === currentId);
+    return pl ? pl.name : 'Playlist';
+  },
 
   getArtistGroups: () => {
     const { tracks } = get();

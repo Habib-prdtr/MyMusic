@@ -16,11 +16,14 @@ import {
   Trash2,
   X,
   Music,
+  ListOrdered,
+  Square,
 } from 'lucide-react-native';
 import { COLORS, RADIUS, SPACING } from '../utils/theme';
 import { useMusicStore } from '../store/musicStore';
 import { Playlist, Track } from '../types/music';
 import { TrackItem } from '../components/TrackItem';
+import { PlaylistSequenceModal } from '../components/PlaylistSequenceModal';
 
 interface PlaylistsScreenProps {
   onRequestCreatePlaylist: () => void;
@@ -41,6 +44,15 @@ export const PlaylistsScreen: React.FC<PlaylistsScreenProps> = ({
   const playbackState = useMusicStore(s => s.playbackState);
   const toggleFavorite = useMusicStore(s => s.toggleFavorite);
   const isFavorite = useMusicStore(s => s.isFavorite);
+
+  const isSequenceActive = useMusicStore(s => s.isSequenceActive);
+  const playlistSequence = useMusicStore(s => s.playlistSequence);
+  const activeSequenceIndex = useMusicStore(s => s.activeSequenceIndex);
+  const stopPlaylistSequence = useMusicStore(s => s.stopPlaylistSequence);
+  const getActiveSequencePlaylistName = useMusicStore(s => s.getActiveSequencePlaylistName);
+  const activeSequencePlaylistName = getActiveSequencePlaylistName();
+
+  const [isSequenceModalVisible, setIsSequenceModalVisible] = useState(false);
 
   const favoriteTracks = getFavoriteTracks();
   const [selectedPlaylist, setSelectedPlaylist] = useState<{
@@ -84,6 +96,38 @@ export const PlaylistsScreen: React.FC<PlaylistsScreenProps> = ({
         contentContainerStyle={styles.listContent}
         ListHeaderComponent={
           <View style={styles.headerArea}>
+            {/* Active Sequence Banner */}
+            {isSequenceActive && (
+              <TouchableOpacity
+                style={styles.activeSequenceCard}
+                onPress={() => setIsSequenceModalVisible(true)}
+                activeOpacity={0.85}
+              >
+                <View style={styles.seqIconBox}>
+                  <ListOrdered size={20} color="#FFF" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <View style={styles.pulsingDot} />
+                    <Text style={styles.seqCardTitle}>Urutan Playlist Berjalan</Text>
+                  </View>
+                  <Text style={styles.seqCardSubtitle} numberOfLines={1}>
+                    Sedang: <Text style={{ color: '#FFF', fontWeight: '700' }}>{activeSequencePlaylistName || 'Playlist'}</Text> ({activeSequenceIndex + 1}/{playlistSequence.length})
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.stopSeqBtn}
+                  onPress={e => {
+                    e.stopPropagation();
+                    stopPlaylistSequence();
+                  }}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Square size={12} color="#FFF" fill="#FFF" />
+                </TouchableOpacity>
+              </TouchableOpacity>
+            )}
+
             {/* Favorites Hero Card */}
             <TouchableOpacity
               style={styles.favoritesHero}
@@ -120,13 +164,34 @@ export const PlaylistsScreen: React.FC<PlaylistsScreenProps> = ({
             {/* Custom Playlists Bar */}
             <View style={styles.sectionBar}>
               <Text style={styles.sectionTitle}>MY PLAYLISTS ({playlists.length})</Text>
-              <TouchableOpacity
-                style={styles.newPlaylistBtn}
-                onPress={onRequestCreatePlaylist}
-              >
-                <Plus size={16} color={COLORS.primaryLight} style={{ marginRight: 4 }} />
-                <Text style={styles.newPlaylistBtnText}>New</Text>
-              </TouchableOpacity>
+              <View style={styles.sectionBtnGroup}>
+                <TouchableOpacity
+                  style={[styles.sequenceBtn, isSequenceActive && styles.sequenceBtnActive]}
+                  onPress={() => setIsSequenceModalVisible(true)}
+                >
+                  <ListOrdered
+                    size={15}
+                    color={isSequenceActive ? '#FFF' : COLORS.primaryLight}
+                    style={{ marginRight: 4 }}
+                  />
+                  <Text
+                    style={[
+                      styles.sequenceBtnText,
+                      isSequenceActive && styles.sequenceBtnTextActive,
+                    ]}
+                  >
+                    {isSequenceActive ? 'Urutan Aktif' : 'Urutan'}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.newPlaylistBtn}
+                  onPress={onRequestCreatePlaylist}
+                >
+                  <Plus size={16} color={COLORS.primaryLight} style={{ marginRight: 4 }} />
+                  <Text style={styles.newPlaylistBtnText}>New</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         }
@@ -282,6 +347,11 @@ export const PlaylistsScreen: React.FC<PlaylistsScreenProps> = ({
           />
         </View>
       </Modal>
+
+      <PlaylistSequenceModal
+        visible={isSequenceModalVisible}
+        onClose={() => setIsSequenceModalVisible(false)}
+      />
     </View>
   );
 };
@@ -297,6 +367,82 @@ const styles = StyleSheet.create({
   },
   headerArea: {
     paddingVertical: SPACING.sm,
+  },
+  activeSequenceCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1E1B4B',
+    borderRadius: RADIUS.lg,
+    padding: SPACING.md,
+    marginBottom: SPACING.md,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  seqIconBox: {
+    width: 38,
+    height: 38,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: SPACING.md,
+  },
+  pulsingDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#34D399',
+  },
+  seqCardTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#FFF',
+  },
+  seqCardSubtitle: {
+    fontSize: 12,
+    color: COLORS.textSecondary,
+    marginTop: 2,
+  },
+  stopSeqBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: RADIUS.full,
+    backgroundColor: 'rgba(239, 68, 68, 0.25)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: SPACING.sm,
+  },
+  sectionBtnGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
+  },
+  sequenceBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: SPACING.xs,
+    paddingHorizontal: SPACING.md,
+    backgroundColor: COLORS.cardActive,
+    borderRadius: RADIUS.full,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  sequenceBtnActive: {
+    backgroundColor: 'rgba(99, 102, 241, 0.25)',
+    borderColor: COLORS.primaryLight,
+  },
+  sequenceBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: COLORS.primaryLight,
+  },
+  sequenceBtnTextActive: {
+    color: '#FFF',
   },
   favoritesHero: {
     flexDirection: 'row',
