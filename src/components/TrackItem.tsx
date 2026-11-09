@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.md,
   },
   containerActive: {
-    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+    backgroundColor: 'rgba(13, 148, 136, 0.08)',
   },
   artworkContainer: {
     width: 46,
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   },
   artworkActive: {
     borderColor: COLORS.primaryLight,
-    backgroundColor: 'rgba(99, 102, 241, 0.15)',
+    backgroundColor: 'rgba(13, 148, 136, 0.12)',
   },
   infoContainer: {
     flex: 1,

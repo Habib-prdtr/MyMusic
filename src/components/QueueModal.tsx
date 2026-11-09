@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.md,
   },
   itemRowActive: {
-    backgroundColor: 'rgba(99, 102, 241, 0.12)',
+    backgroundColor: 'rgba(13, 148, 136, 0.1)',
   },
   indexText: {
     width: 28,

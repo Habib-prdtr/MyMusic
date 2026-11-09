@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: '#161722',
+    backgroundColor: COLORS.card,
     borderTopLeftRadius: RADIUS.xxl,
     borderTopRightRadius: RADIUS.xxl,
     borderWidth: 1,
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: RADIUS.lg,
-    backgroundColor: 'rgba(108, 92, 231, 0.15)',
+    backgroundColor: 'rgba(13, 148, 136, 0.12)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
   activeBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(108, 92, 231, 0.25)',
+    backgroundColor: 'rgba(13, 148, 136, 0.12)',
     marginHorizontal: SPACING.lg,
     marginTop: SPACING.md,
     paddingHorizontal: SPACING.md,
@@ -414,10 +414,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: SPACING.xl,
-    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+    backgroundColor: 'rgba(0, 0, 0, 0.02)',
     borderRadius: RADIUS.lg,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: COLORS.border,
     borderStyle: 'dashed',
   },
   emptyTitle: {
@@ -447,7 +447,7 @@ const styles = StyleSheet.create({
   },
   sequenceItemActive: {
     borderColor: COLORS.primary,
-    backgroundColor: 'rgba(108, 92, 231, 0.12)',
+    backgroundColor: 'rgba(13, 148, 136, 0.08)',
   },
   orderBadge: {
     width: 26,
@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
     color: COLORS.text,
   },
   itemNameActive: {
-    color: COLORS.primaryLight,
+    color: COLORS.primary,
   },
   itemMeta: {
     fontSize: 11,
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
   arrowBtn: {
     padding: 6,
     borderRadius: RADIUS.sm,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: 'rgba(0, 0, 0, 0.04)',
   },
   removeBtn: {
     padding: 6,
@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
   availableCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    backgroundColor: COLORS.surface,
     borderRadius: RADIUS.md,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
@@ -525,7 +525,7 @@ const styles = StyleSheet.create({
   addBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(108, 92, 231, 0.15)',
+    backgroundColor: 'rgba(13, 148, 136, 0.12)',
     paddingHorizontal: SPACING.sm,
     paddingVertical: 6,
     borderRadius: RADIUS.md,

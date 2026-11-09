@@ -56,9 +56,9 @@ export const MiniPlayer: React.FC = () => {
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
               {isPlaying ? (
-                <Pause size={20} color={COLORS.text} fill={COLORS.text} />
+                <Pause size={20} color="#FFF" fill="#FFF" />
               ) : (
-                <Play size={20} color={COLORS.text} fill={COLORS.text} />
+                <Play size={20} color="#FFF" fill="#FFF" />
               )}
             </TouchableOpacity>
 
@@ -92,19 +92,19 @@ const styles = StyleSheet.create({
     borderColor: COLORS.borderLight,
     overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
     shadowRadius: 10,
-    elevation: 8,
+    elevation: 6,
   },
   progressBarBackground: {
     height: 2.5,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    backgroundColor: 'rgba(13, 148, 136, 0.15)',
     width: '100%',
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: COLORS.primaryLight,
+    backgroundColor: COLORS.primary,
   },
   contentRow: {
     flexDirection: 'row',
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: SPACING.md,
     borderWidth: 1,
-    borderColor: 'rgba(99, 102, 241, 0.3)',
+    borderColor: 'rgba(13, 148, 136, 0.25)',
   },
   textContainer: {
     flex: 1,

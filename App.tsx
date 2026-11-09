@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView, initialWindowMetrics } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { Music, Users, Disc, ListMusic, Radio } from 'lucide-react-native';
+import { Music, Users, Disc, ListMusic, Radio, Leaf } from 'lucide-react-native';
 
 import { useMusicStore } from './src/store/musicStore';
 import { COLORS, RADIUS, SPACING } from './src/utils/theme';
@@ -29,6 +29,7 @@ import {
   AddToPlaylistModal,
 } from './src/components/PlaylistModal';
 import { PermissionView } from './src/components/PermissionView';
+import { FallingLeaves } from './src/components/FallingLeaves';
 
 export default function App() {
   const initialize = useMusicStore(s => s.initialize);
@@ -43,6 +44,7 @@ export default function App() {
 
   const [isCreatePlaylistVisible, setIsCreatePlaylistVisible] = useState(false);
   const [selectedTrackForMenu, setSelectedTrackForMenu] = useState<Track | null>(null);
+  const [showLeaves, setShowLeaves] = useState(true);
 
   useEffect(() => {
     initialize();
@@ -57,7 +59,7 @@ export default function App() {
 
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics} style={{ flex: 1, backgroundColor: COLORS.background }}>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <SafeAreaView
         style={[
           styles.rootContainer,
@@ -65,9 +67,10 @@ export default function App() {
         ]}
         edges={['top', 'left', 'right']}
       >
+        <FallingLeaves enabled={showLeaves} />
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={COLORS.primaryLight} />
+            <ActivityIndicator size="large" color={COLORS.primary} />
             <Text style={styles.loadingText}>Initializing PulseMusic...</Text>
           </View>
         ) : hasPermission === false ? (
@@ -91,6 +94,28 @@ export default function App() {
                 <View style={styles.offlineBadge}>
                   <Text style={styles.offlineText}>OFFLINE</Text>
                 </View>
+
+                {/* Falling Leaves Toggle Button */}
+                <TouchableOpacity
+                  style={[styles.leavesToggleBtn, showLeaves && styles.leavesToggleBtnActive]}
+                  onPress={() => setShowLeaves(prev => !prev)}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  accessibilityLabel="Toggle falling leaves effect"
+                >
+                  <Leaf
+                    size={14}
+                    color={showLeaves ? COLORS.primary : COLORS.textMuted}
+                    fill={showLeaves ? COLORS.primary : 'transparent'}
+                  />
+                  <Text
+                    style={[
+                      styles.leavesToggleText,
+                      showLeaves && styles.leavesToggleTextActive,
+                    ]}
+                  >
+                    Daun
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
 
@@ -222,18 +247,42 @@ const styles = StyleSheet.create({
   },
   offlineBadge: {
     marginLeft: SPACING.sm,
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    backgroundColor: 'rgba(13, 148, 136, 0.12)',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: RADIUS.sm,
     borderWidth: 1,
-    borderColor: 'rgba(16, 185, 129, 0.3)',
+    borderColor: 'rgba(13, 148, 136, 0.25)',
   },
   offlineText: {
     fontSize: 9,
     fontWeight: '800',
-    color: COLORS.success,
+    color: COLORS.primaryDark,
     letterSpacing: 0.8,
+  },
+  leavesToggleBtn: {
+    marginLeft: 'auto',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: RADIUS.full,
+    backgroundColor: COLORS.card,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  leavesToggleBtnActive: {
+    backgroundColor: 'rgba(13, 148, 136, 0.12)',
+    borderColor: COLORS.primaryLight,
+  },
+  leavesToggleText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: COLORS.textMuted,
+  },
+  leavesToggleTextActive: {
+    color: COLORS.primaryDark,
   },
   contentArea: {
     flex: 1,
@@ -258,7 +307,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   tabIconBoxActive: {
-    backgroundColor: 'rgba(99, 102, 241, 0.15)',
+    backgroundColor: 'rgba(13, 148, 136, 0.15)',
   },
   tabLabel: {
     fontSize: 11,
@@ -266,7 +315,7 @@ const styles = StyleSheet.create({
     color: COLORS.textMuted,
   },
   tabLabelActive: {
-    color: COLORS.primaryLight,
+    color: COLORS.primary,
     fontWeight: '700',
   },
 });

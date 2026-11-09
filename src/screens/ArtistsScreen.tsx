@@ -68,7 +68,7 @@ export const ArtistsScreen: React.FC<ArtistsScreenProps> = ({ onOpenTrackMenu })
               onPress={() => handlePlayArtistAll(item)}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <Play size={16} color={COLORS.text} fill={COLORS.text} />
+              <Play size={16} color="#FFF" fill="#FFF" />
             </TouchableOpacity>
 
             <ChevronRight size={18} color={COLORS.textMuted} style={{ marginLeft: 8 }} />
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: RADIUS.full,
-    backgroundColor: 'rgba(99, 102, 241, 0.15)',
+    backgroundColor: 'rgba(13, 148, 136, 0.12)',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: SPACING.md,

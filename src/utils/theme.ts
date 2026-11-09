@@ -1,30 +1,30 @@
 export const COLORS = {
-  background: '#0B0C11',
-  card: '#141622',
-  cardAlt: '#1B1E2E',
-  cardActive: '#252940',
-  surface: '#181A27',
-  border: '#222538',
-  borderLight: '#2D324D',
+  background: '#F8FAFC',
+  card: '#FFFFFF',
+  cardAlt: '#F0FDFA',
+  cardActive: '#CCFBF1',
+  surface: '#FFFFFF',
+  border: '#E2E8F0',
+  borderLight: '#F1F5F9',
   
-  primary: '#6366F1',       // Electric Indigo
-  primaryLight: '#818CF8',
-  primaryDark: '#4F46E5',
-  accent: '#A855F7',        // Purple Neon
-  accentGradientStart: '#6366F1',
-  accentGradientEnd: '#EC4899',
+  primary: '#0D9488',       // Hijau Tosca / Teal
+  primaryLight: '#14B8A6',
+  primaryDark: '#0F766E',
+  accent: '#06B6D4',        // Cyan accent
+  accentGradientStart: '#14B8A6',
+  accentGradientEnd: '#0D9488',
   
-  text: '#F8FAFC',
-  textSecondary: '#94A3B8',
-  textMuted: '#64748B',
+  text: '#0F172A',          // Dark Slate untuk tema terang
+  textSecondary: '#475569',
+  textMuted: '#94A3B8',
   
   heart: '#F43F5E',
   success: '#10B981',
   warning: '#F59E0B',
   danger: '#EF4444',
   
-  overlay: 'rgba(5, 6, 10, 0.85)',
-  miniPlayerBg: '#131522F5',
+  overlay: 'rgba(15, 23, 42, 0.45)',
+  miniPlayerBg: 'rgba(255, 255, 255, 0.96)',
 };
 
 export const SPACING = {

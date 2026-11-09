@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: RADIUS.sm,
-    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+    backgroundColor: 'rgba(13, 148, 136, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
   },

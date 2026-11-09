@@ -228,7 +228,7 @@ export const PlaylistsScreen: React.FC<PlaylistsScreenProps> = ({
                 disabled={count === 0}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <Play size={15} color={COLORS.text} fill={COLORS.text} />
+                <Play size={15} color="#FFF" fill="#FFF" />
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -371,12 +371,12 @@ const styles = StyleSheet.create({
   activeSequenceCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1E1B4B',
+    backgroundColor: '#0F766E',
     borderRadius: RADIUS.lg,
     padding: SPACING.md,
     marginBottom: SPACING.md,
     borderWidth: 1,
-    borderColor: COLORS.primary,
+    borderColor: COLORS.primaryLight,
     shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   sequenceBtnActive: {
-    backgroundColor: 'rgba(99, 102, 241, 0.25)',
+    backgroundColor: 'rgba(13, 148, 136, 0.15)',
     borderColor: COLORS.primaryLight,
   },
   sequenceBtnText: {
@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: RADIUS.md,
-    backgroundColor: 'rgba(99, 102, 241, 0.15)',
+    backgroundColor: 'rgba(13, 148, 136, 0.12)',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: SPACING.md,
@@ -550,7 +550,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: RADIUS.full,
-    backgroundColor: COLORS.surface,
+    backgroundColor: COLORS.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: SPACING.xs,
