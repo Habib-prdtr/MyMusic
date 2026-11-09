@@ -6,8 +6,9 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   StatusBar as RNStatusBar,
+  Platform,
 } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView, initialWindowMetrics } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Music, Users, Disc, ListMusic, Radio } from 'lucide-react-native';
 
@@ -55,9 +56,15 @@ export default function App() {
   ];
 
   return (
-    <SafeAreaProvider>
+    <SafeAreaProvider initialMetrics={initialWindowMetrics} style={{ flex: 1, backgroundColor: COLORS.background }}>
       <StatusBar style="light" />
-      <SafeAreaView style={styles.rootContainer} edges={['top', 'left', 'right']}>
+      <SafeAreaView
+        style={[
+          styles.rootContainer,
+          Platform.OS === 'web' && ({ height: '100vh', width: '100%', maxWidth: 768, alignSelf: 'center' } as any),
+        ]}
+        edges={['top', 'left', 'right']}
+      >
         {isLoading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={COLORS.primaryLight} />

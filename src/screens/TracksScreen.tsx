@@ -5,6 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  Platform,
+  FlatList,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { ArrowDownUp, RefreshCw, Music2, FolderPlus } from 'lucide-react-native';
@@ -92,43 +94,81 @@ export const TracksScreen: React.FC<TracksScreenProps> = ({ onOpenTrackMenu }) =
         </Text>
       </View>
 
-      {/* Virtualized FlashList */}
+      {/* Virtualized List */}
       <View style={{ flex: 1 }}>
-        <FlashList
-          data={filteredTracks}
-          keyExtractor={item => item.id}
-          refreshing={isScanning}
-          onRefresh={scanLibrary}
-          renderItem={({ item }) => {
-            const isActive = activeTrack?.id === item.id;
-            return (
-              <TrackItem
-                track={item}
-                isActive={isActive}
-                isPlaying={isActive && playbackState === 'playing'}
-                isFavorite={isFavorite(item.id)}
-                onPress={() => playTrack(item, filteredTracks)}
-                onToggleFavorite={() => toggleFavorite(item.id)}
-                onMorePress={() => onOpenTrackMenu(item)}
-              />
-            );
-          }}
-          ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <View style={styles.emptyIconBox}>
-                <Music2 size={36} color={COLORS.textMuted} />
+        {Platform.OS === 'web' ? (
+          <FlatList
+            data={filteredTracks}
+            keyExtractor={item => item.id}
+            refreshing={isScanning}
+            onRefresh={scanLibrary}
+            renderItem={({ item }) => {
+              const isActive = activeTrack?.id === item.id;
+              return (
+                <TrackItem
+                  track={item}
+                  isActive={isActive}
+                  isPlaying={isActive && playbackState === 'playing'}
+                  isFavorite={isFavorite(item.id)}
+                  onPress={() => playTrack(item, filteredTracks)}
+                  onToggleFavorite={() => toggleFavorite(item.id)}
+                  onMorePress={() => onOpenTrackMenu(item)}
+                />
+              );
+            }}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <View style={styles.emptyIconBox}>
+                  <Music2 size={36} color={COLORS.textMuted} />
+                </View>
+                <Text style={styles.emptyTitle}>
+                  {searchQuery ? 'No matching tracks' : 'No music found'}
+                </Text>
+                <Text style={styles.emptySubtitle}>
+                  {searchQuery
+                    ? 'Try a different search keyword.'
+                    : 'Click the + button at the top right to import music files from your computer.'}
+                </Text>
               </View>
-              <Text style={styles.emptyTitle}>
-                {searchQuery ? 'No matching tracks' : 'No music found on device'}
-              </Text>
-              <Text style={styles.emptySubtitle}>
-                {searchQuery
-                  ? 'Try a different search keyword.'
-                  : 'Pull down to refresh or check your music folders.'}
-              </Text>
-            </View>
-          }
-        />
+            }
+          />
+        ) : (
+          <FlashList
+            data={filteredTracks}
+            keyExtractor={item => item.id}
+            refreshing={isScanning}
+            onRefresh={scanLibrary}
+            renderItem={({ item }) => {
+              const isActive = activeTrack?.id === item.id;
+              return (
+                <TrackItem
+                  track={item}
+                  isActive={isActive}
+                  isPlaying={isActive && playbackState === 'playing'}
+                  isFavorite={isFavorite(item.id)}
+                  onPress={() => playTrack(item, filteredTracks)}
+                  onToggleFavorite={() => toggleFavorite(item.id)}
+                  onMorePress={() => onOpenTrackMenu(item)}
+                />
+              );
+            }}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <View style={styles.emptyIconBox}>
+                  <Music2 size={36} color={COLORS.textMuted} />
+                </View>
+                <Text style={styles.emptyTitle}>
+                  {searchQuery ? 'No matching tracks' : 'No music found on device'}
+                </Text>
+                <Text style={styles.emptySubtitle}>
+                  {searchQuery
+                    ? 'Try a different search keyword.'
+                    : 'Pull down to refresh or check your music folders.'}
+                </Text>
+              </View>
+            }
+          />
+        )}
       </View>
 
       {/* Sort Options Modal */}
