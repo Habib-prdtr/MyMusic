@@ -90,7 +90,10 @@ export default function App() {
                 <View style={styles.brandIconBox}>
                   <Leaf size={20} color="#FFF" fill="#FFF" />
                 </View>
-                <Text style={styles.brandTitle}>FallingMusic</Text>
+                <View style={styles.brandTextBox}>
+                  <Text style={styles.brandTitle}>FallingMusic</Text>
+                  <Text style={styles.brandAuthor}>by Habib-prdtr</Text>
+                </View>
                 <View style={styles.offlineBadge}>
                   <Text style={styles.offlineText}>OFFLINE</Text>
                 </View>
@@ -239,11 +242,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: SPACING.sm,
   },
+  brandTextBox: {
+    justifyContent: 'center',
+  },
   brandTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '900',
     color: COLORS.text,
     letterSpacing: -0.5,
+    lineHeight: 20,
+  },
+  brandAuthor: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: COLORS.primary,
+    letterSpacing: 0.2,
   },
   offlineBadge: {
     marginLeft: SPACING.sm,

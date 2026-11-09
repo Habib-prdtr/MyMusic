@@ -227,6 +227,8 @@ export const NowPlayingModal: React.FC<NowPlayingModalProps> = ({
             <FolderPlus size={18} color={COLORS.textSecondary} style={{ marginRight: 8 }} />
             <Text style={styles.addPlaylistText}>Add to Playlist</Text>
           </TouchableOpacity>
+
+          <Text style={styles.authorTag}>FallingMusic • Habib-prdtr</Text>
         </View>
       </SafeAreaView>
     </Modal>
@@ -394,5 +396,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.textSecondary,
     fontWeight: '600',
+  },
+  authorTag: {
+    marginTop: SPACING.md,
+    fontSize: 11,
+    fontWeight: '700',
+    color: COLORS.primaryDark,
+    letterSpacing: 0.5,
   },
 });

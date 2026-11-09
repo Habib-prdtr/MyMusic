@@ -1,6 +1,8 @@
 {
   "name": "fallingmusic",
   "version": "1.0.0",
+  "author": "Habib-prdtr",
+  "repository": "https://github.com/Habib-prdtr/MyMusic",
   "main": "index.ts",
   "dependencies": {
     "@expo/metro-runtime": "~58.0.17",

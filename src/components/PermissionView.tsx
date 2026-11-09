@@ -67,6 +67,8 @@ export const PermissionView: React.FC<PermissionViewProps> = ({
           </TouchableOpacity>
         )}
       </View>
+
+      <Text style={styles.authorBadge}>Dibuat oleh Habib-prdtr</Text>
     </View>
   );
 };
@@ -180,5 +182,13 @@ const styles = StyleSheet.create({
     color: COLORS.primaryLight,
     fontSize: 14,
     fontWeight: '700',
+  },
+  authorBadge: {
+    marginTop: SPACING.xl,
+    fontSize: 12,
+    fontWeight: '700',
+    color: COLORS.primaryDark,
+    textAlign: 'center',
+    letterSpacing: 0.3,
   },
 });
