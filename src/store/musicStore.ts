@@ -127,6 +127,9 @@ export const useMusicStore = create<MusicStoreState>((set, get) => ({
   isSequenceActive: false,
 
   initialize: async () => {
+    // 0. Ensure audio session is initialized for background playback
+    await audioService.initAudio();
+
     // 1. Hook into AudioService callbacks
     audioService.setStatusCallback(status => {
       set({
@@ -310,21 +313,9 @@ export const useMusicStore = create<MusicStoreState>((set, get) => ({
           nextSeq++;
         }
 
-        // Sequence reached the end
-        if (repeatMode === 'all') {
-          // Loop entire sequence
-          await get().startPlaylistSequence(playlistSequence, 0);
-          return;
-        } else {
-          await audioService.stop();
-          set({
-            playbackState: 'idle',
-            position: 0,
-            isSequenceActive: false,
-            activeSequenceIndex: -1,
-          });
-          return;
-        }
+        // Sequence reached the end: loop back to the first playlist and first track continuously (never stop)
+        await get().startPlaylistSequence(playlistSequence, 0);
+        return;
       }
 
       if (repeatMode === 'all') {

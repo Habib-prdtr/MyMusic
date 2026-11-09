@@ -27,7 +27,8 @@ class AudioService {
     try {
       await AudioModule.setAudioModeAsync({
         playsInSilentMode: true,
-        interruptionMode: 'duckOthers',
+        shouldPlayInBackground: true,
+        interruptionMode: 'doNotMix',
         shouldRouteThroughEarpiece: false,
       });
       this.isConfigured = true;
@@ -75,11 +76,20 @@ class AudioService {
       // Setup lock screen controls & notification metadata (FR-4) for standalone / dev builds
       if (!isExpoGo) {
         try {
-          const lockScreenPromise = (player as any).setActiveForLockScreen?.(true, {
-            title: track.title,
-            artist: track.artist,
-            albumTitle: track.album,
-          });
+          const lockScreenPromise = (player as any).setActiveForLockScreen?.(
+            true,
+            {
+              title: track.title,
+              artist: track.artist || 'FallingMusic',
+              albumTitle: track.album || 'FallingMusic',
+            },
+            {
+              showSeekForward: true,
+              showSeekBackward: true,
+              seekForwardIntervalSeconds: 10,
+              seekBackwardIntervalSeconds: 10,
+            }
+          );
           if (lockScreenPromise && typeof lockScreenPromise.catch === 'function') {
             lockScreenPromise.catch(() => {});
           }
